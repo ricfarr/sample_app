@@ -31,7 +31,7 @@ describe UsersController do
 
     it "should have a profile image" do
       get :show, :id => @user
-      response.should have_selector("h1>img", "class => "gravatar")
+      response.should have_selector("h1>img", :class => "gravatar")
     end
 
   end
@@ -66,12 +66,12 @@ describe UsersController do
       end
 
       it "should have the right title" do
-        post :create, user => @attr
+        post :create, :user => @attr
         response.should have_selector("title", :content => "Sign up")
       end
 
       it "should render the 'new' page" do
-        post :create, user => @attr
+        post :create, :user => @attr
         response.should render_template('new')
       end
 
@@ -86,17 +86,22 @@ describe UsersController do
 
       it "should create a user" do
         lambda do
-          post :create,: user => @attr
+          post :create, :user => @attr
         end.should change(User, :count).by(1)
       end
 
-      if "should redirect to the user show page" do
+      it "should sign the user in" do
+        post :create, :user => @attr
+        controller.should be_signed_in
+      end
+
+      it "should redirect to the user show page" do
         post :create, :user => @attr
         response.should redirect_to(user_path(assigns(:user)))
       end
 
       it "should have a welcome message" do
-        post :create, user => @attr
+        post :create, :user => @attr
         flash[:success].should =~ /welcome to the sample app/i
       end
 
